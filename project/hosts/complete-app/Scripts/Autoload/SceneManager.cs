@@ -24,6 +24,10 @@ public partial class SceneManager : Node
             throw new ArgumentException($"Scene path does not exist: {scenePath}", nameof(scenePath));
         }
 
-        GetTree().ChangeSceneToFile(scenePath);
+        var result = GetTree().ChangeSceneToFile(scenePath);
+        if (result != Error.Ok)
+        {
+            throw new InvalidOperationException($"Failed to change scene to '{scenePath}': {result}");
+        }
     }
 }
