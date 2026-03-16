@@ -5,6 +5,9 @@ namespace UltimaMagic.Overworld;
 
 public partial class Player : CharacterBody2D
 {
+    [Signal]
+    public delegate void StepTakenEventHandler(Vector2I tilePosition);
+
     [Export]
     public int TileSize { get; set; } = 32;
 
@@ -123,6 +126,7 @@ public partial class Player : CharacterBody2D
         Position = OverworldGrid.TileToWorld(TilePosition, TileSize);
         IsMoving = false;
         StepsTaken++;
+        EmitSignal(SignalName.StepTaken, TilePosition);
     }
 
     private void TryInteract()

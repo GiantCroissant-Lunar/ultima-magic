@@ -18,6 +18,7 @@ run/main_scene="res://Scenes/Overworld/Overworld.tscn"
 [autoload]
 
 GameManager="*res://Scripts/Autoload/GameManager.cs"
+EncounterManager="*res://Scripts/Autoload/EncounterManager.cs"
 SceneManager="*res://Scripts/Autoload/SceneManager.cs"
 
 [dotnet]

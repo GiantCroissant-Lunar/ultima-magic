@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EncounterData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/EncounterData.cs" id="1_encounter_data"]
+[ext_resource type="Script" path="res://Scripts/Data/EnemyGroup.cs" id="2_enemy_group"]
+
+[sub_resource type="Resource" id="1_harpies"]
+script = ExtResource("2_enemy_group")
+EnemyTypes = PackedStringArray("Harpy", "Harpy Screecher")
+MinCount = 2
+MaxCount = 4
+Weight = 2.5
+
+[sub_resource type="Resource" id="2_rocklings"]
+script = ExtResource("2_enemy_group")
+EnemyTypes = PackedStringArray("Rockling", "Stonecrawler")
+MinCount = 1
+MaxCount = 3
+Weight = 3.0
+
+[resource]
+script = ExtResource("1_encounter_data")
+PossibleGroups = Array[Resource]([SubResource("1_harpies"), SubResource("2_rocklings")])

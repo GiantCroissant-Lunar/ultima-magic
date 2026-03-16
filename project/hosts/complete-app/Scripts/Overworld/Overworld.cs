@@ -1,4 +1,7 @@
+using System;
+using System.Linq;
 using Godot;
+using UltimaMagic.Autoload;
 using UltimaMagic.UI;
 
 namespace UltimaMagic.Overworld;
@@ -32,6 +35,7 @@ public partial class Overworld : Node2D
 
         BuildMap();
         PopulateScene();
+        RegisterEncounterManager();
     }
 
     private void BuildMap()
@@ -139,6 +143,29 @@ public partial class Overworld : Node2D
         }
 
         return scene;
+    }
+
+    private void RegisterEncounterManager()
+    {
+        var player = GetNodeOrNull<Player>("Player");
+        if (player == null)
+        {
+            GD.PushError("Cannot register encounter manager because the overworld player node was not found.");
+            return;
+        }
+
+        if (EncounterManager.Instance == null)
+        {
+            GD.PushError("Cannot register encounter manager because the EncounterManager autoload is unavailable.");
+            return;
+        }
+
+        var encounterZonesRoot = GetNodeOrNull<Node>("EncounterZones");
+        var encounterZones = encounterZonesRoot == null
+            ? Array.Empty<EncounterZone>()
+            : encounterZonesRoot.GetChildren().OfType<EncounterZone>().ToArray();
+
+        EncounterManager.Instance.RegisterOverworld(player, _groundLayer, _detailLayer, encounterZones);
     }
 
     private void FillGround(Vector2I atlasCoords)

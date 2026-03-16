@@ -7,6 +7,8 @@ public static class OverworldGrid
     public const int DefaultTileSize = 32;
     public const float TileCenterOffset = 0.5f;
     public const string WalkableCustomDataKey = "walkable";
+    public const string EncounterRateCustomDataKey = "encounter_rate";
+    public const string TileTypeCustomDataKey = "tile_type";
     public const string InteractableGroup = "interactable";
     public const string TileBlockerGroup = "tile_blocker";
 
@@ -58,6 +60,30 @@ public static class OverworldGrid
         return IsLayerWalkable(groundLayer, tile) && IsLayerWalkable(detailLayer, tile);
     }
 
+    public static float GetEncounterMultiplier(TileMapLayer groundLayer, TileMapLayer detailLayer, Vector2I tile)
+    {
+        var detailMultiplier = GetLayerCustomData(detailLayer, tile, EncounterRateCustomDataKey);
+        if (detailMultiplier != null)
+        {
+            return (float)detailMultiplier.Value.AsDouble();
+        }
+
+        var groundMultiplier = GetLayerCustomData(groundLayer, tile, EncounterRateCustomDataKey);
+        return groundMultiplier != null ? (float)groundMultiplier.Value.AsDouble() : 1.0f;
+    }
+
+    public static string GetTileType(TileMapLayer groundLayer, TileMapLayer detailLayer, Vector2I tile)
+    {
+        var detailTileType = GetLayerCustomData(detailLayer, tile, TileTypeCustomDataKey);
+        if (detailTileType != null)
+        {
+            return detailTileType.Value.AsString();
+        }
+
+        var groundTileType = GetLayerCustomData(groundLayer, tile, TileTypeCustomDataKey);
+        return groundTileType != null ? groundTileType.Value.AsString() : "unknown";
+    }
+
     public static bool HasTileBlocker(SceneTree tree, Vector2I tile, int tileSize, Node2D? exclude = null)
     {
         foreach (var node in tree.GetNodesInGroup(TileBlockerGroup))
@@ -93,9 +119,18 @@ public static class OverworldGrid
 
     private static bool IsLayerWalkable(TileMapLayer layer, Vector2I tile)
     {
+        var walkable = GetLayerCustomData(layer, tile, WalkableCustomDataKey);
+        return walkable == null || walkable.Value.AsBool();
+    }
+
+    private static Variant? GetLayerCustomData(TileMapLayer layer, Vector2I tile, string customDataKey)
+    {
         var tileData = layer.GetCellTileData(tile);
-        return tileData == null
-            || (tileData.HasCustomData(WalkableCustomDataKey)
-                && tileData.GetCustomData(WalkableCustomDataKey).AsBool());
+        if (tileData == null || !tileData.HasCustomData(customDataKey))
+        {
+            return null;
+        }
+
+        return tileData.GetCustomData(customDataKey);
     }
 }
