@@ -114,7 +114,7 @@ public partial class SceneManager : Node
         {
             Name = "SceneFadeRect",
             Color = new Color(0.0f, 0.0f, 0.0f, 0.0f),
-            MouseFilter = Control.MouseFilterEnum.Stop
+            MouseFilter = Control.MouseFilterEnum.Ignore
         };
         _fadeRect.SetAnchorsPreset(Control.LayoutPreset.FullRect);
 
@@ -184,6 +184,7 @@ public partial class SceneManager : Node
 
         _isTransitioning = true;
         GameManager.Instance?.SetInputEnabled(false);
+        _fadeRect.MouseFilter = Control.MouseFilterEnum.Stop;
 
         try
         {
@@ -201,6 +202,7 @@ public partial class SceneManager : Node
         }
         finally
         {
+            _fadeRect.MouseFilter = Control.MouseFilterEnum.Ignore;
             GameManager.Instance?.SetInputEnabled(true);
             _isTransitioning = false;
         }
@@ -221,10 +223,5 @@ public partial class SceneManager : Node
         player?.SnapToTile(battleResult.PlayerReturnPosition);
 
         EncounterManager.Instance?.ResetEncounterCounter();
-
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.CurrentState = GameManager.GameState.Overworld;
-        }
     }
 }
