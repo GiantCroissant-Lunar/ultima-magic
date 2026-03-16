@@ -14,6 +14,11 @@ config/name="complete-app"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GameManager="*res://Scripts/Autoload/GameManager.cs"
+SceneManager="*res://Scripts/Autoload/SceneManager.cs"
+
 [dotnet]
 
 project/assembly_name="complete-app"
