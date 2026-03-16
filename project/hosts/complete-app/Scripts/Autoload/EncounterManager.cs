@@ -19,6 +19,9 @@ public partial class EncounterManager : Node
     [Export]
     public int GuaranteedSafeSteps { get; set; } = 5;
 
+    [Export]
+    public float DrySpellScalingFactor { get; set; } = 20.0f;
+
     public float CurrentEncounterProbability { get; private set; }
     public int StepsSinceLastEncounter => _stepsSinceLastEncounter;
     public string CurrentZoneName { get; private set; } = "None";
@@ -126,7 +129,7 @@ public partial class EncounterManager : Node
         var extraSteps = _stepsSinceLastEncounter - GuaranteedSafeSteps;
         var probability = zone.BaseEncounterRate
             * tileEncounterMultiplier
-            * (1.0f + (extraSteps / 20.0f));
+            * (1.0f + extraSteps / Mathf.Max(DrySpellScalingFactor, 1.0f));
 
         return Mathf.Clamp(probability, 0.0f, 1.0f);
     }
@@ -148,17 +151,18 @@ public partial class EncounterManager : Node
         }
 
         var totalWeight = possibleGroups.Sum(group => group.Weight);
-        var weightRoll = _rng.RandfRange(0.0f, totalWeight);
+        var weightRoll = _rng.Randf() * totalWeight;
         var selectedGroup = possibleGroups[^1];
 
         foreach (var group in possibleGroups)
         {
-            weightRoll -= group.Weight;
-            if (weightRoll <= 0.0f)
+            if (weightRoll < group.Weight)
             {
                 selectedGroup = group;
                 break;
             }
+
+            weightRoll -= group.Weight;
         }
 
         var minCount = Mathf.Max(selectedGroup.MinCount, 1);

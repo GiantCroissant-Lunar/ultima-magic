@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://Scripts/Overworld/Overworld.cs" id="1_script"]
 [ext_resource type="TileSet" path="res://Resources/Tilesets/OverworldTiles.tres" id="2_tileset"]
@@ -7,6 +7,7 @@
 [ext_resource type="Resource" path="res://Resources/Data/Encounters/ForestEncounterData.tres" id="5_forest_data"]
 [ext_resource type="Resource" path="res://Resources/Data/Encounters/PlainsEncounterData.tres" id="6_plains_data"]
 [ext_resource type="Resource" path="res://Resources/Data/Encounters/FoothillsEncounterData.tres" id="7_foothills_data"]
+[ext_resource type="Resource" path="res://Resources/Data/Encounters/TownEncounterData.tres" id="8_town_data"]
 
 [node name="Overworld" type="Node2D"]
 script = ExtResource("1_script")
@@ -52,7 +53,7 @@ ZoneName = "Moonbrook"
 BaseEncounterRate = 0.0
 Priority = 30
 TileRegion = Rect2i(25, 5, 8, 6)
-EncounterData = ExtResource("6_plains_data")
+EncounterData = ExtResource("8_town_data")
 
 [node name="Plains" type="Node" parent="EncounterZones"]
 script = ExtResource("4_zone")
