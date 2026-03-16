@@ -4,6 +4,9 @@ namespace UltimaMagic.Overworld;
 
 public partial class Player : CharacterBody2D
 {
+    private const float TileCenterOffset = 0.5f;
+    private const string WalkableCustomDataKey = "walkable";
+
     [Export]
     public int TileSize { get; set; } = 32;
 
@@ -45,24 +48,18 @@ public partial class Player : CharacterBody2D
 
     private Vector2I GetInputDirection()
     {
-        if (Input.IsActionPressed("move_up"))
+        var upPressed = Input.IsActionPressed("move_up");
+        var downPressed = Input.IsActionPressed("move_down");
+        if (upPressed != downPressed)
         {
-            return Vector2I.Up;
+            return upPressed ? Vector2I.Up : Vector2I.Down;
         }
 
-        if (Input.IsActionPressed("move_down"))
+        var leftPressed = Input.IsActionPressed("move_left");
+        var rightPressed = Input.IsActionPressed("move_right");
+        if (leftPressed != rightPressed)
         {
-            return Vector2I.Down;
-        }
-
-        if (Input.IsActionPressed("move_left"))
-        {
-            return Vector2I.Left;
-        }
-
-        if (Input.IsActionPressed("move_right"))
-        {
-            return Vector2I.Right;
+            return leftPressed ? Vector2I.Left : Vector2I.Right;
         }
 
         return Vector2I.Zero;
@@ -98,7 +95,7 @@ public partial class Player : CharacterBody2D
             .TweenProperty(this, "position", TileToWorld(targetTile), 1.0d / MoveSpeed)
             .SetTrans(Tween.TransitionType.Sine)
             .SetEase(Tween.EaseType.InOut);
-        _moveTween.Finished += OnMoveFinished;
+        _moveTween.TweenCallback(Callable.From(OnMoveFinished));
     }
 
     private void OnMoveFinished()
@@ -122,20 +119,22 @@ public partial class Player : CharacterBody2D
     private static bool IsLayerWalkable(TileMapLayer layer, Vector2I tile)
     {
         var tileData = layer.GetCellTileData(tile);
-        return tileData == null || tileData.GetCustomData("walkable").AsBool();
+        return tileData == null
+            || (tileData.HasCustomData(WalkableCustomDataKey)
+                && tileData.GetCustomData(WalkableCustomDataKey).AsBool());
     }
 
     private Vector2I WorldToTile(Vector2 worldPosition)
     {
         return new Vector2I(
-            Mathf.RoundToInt((worldPosition.X - (TileSize * 0.5f)) / TileSize),
-            Mathf.RoundToInt((worldPosition.Y - (TileSize * 0.5f)) / TileSize));
+            Mathf.RoundToInt((worldPosition.X - (TileSize * TileCenterOffset)) / TileSize),
+            Mathf.RoundToInt((worldPosition.Y - (TileSize * TileCenterOffset)) / TileSize));
     }
 
     private Vector2 TileToWorld(Vector2I tilePosition)
     {
         return new Vector2(
-            (tilePosition.X + 0.5f) * TileSize,
-            (tilePosition.Y + 0.5f) * TileSize);
+            (tilePosition.X + TileCenterOffset) * TileSize,
+            (tilePosition.Y + TileCenterOffset) * TileSize);
     }
 }
