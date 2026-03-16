@@ -15,7 +15,7 @@ public partial class Overworld : Node2D
     private static readonly Vector2I ForestTile = new(3, 0);
     private static readonly Vector2I PathTile = new(4, 0);
     private static readonly Vector2I TownTile = new(5, 0);
-    private static readonly Vector2I PlayerStartTile = new(6, 15);
+    private static readonly Vector2I InitialPlayerTile = new(6, 15);
 
     private TileMapLayer _groundLayer = null!;
     private TileMapLayer _detailLayer = null!;
@@ -28,7 +28,7 @@ public partial class Overworld : Node2D
         _player = GetNode<Node2D>("Player");
 
         BuildMap();
-        PositionPlayer(PlayerStartTile);
+        PositionPlayer(InitialPlayerTile);
     }
 
     private void BuildMap()
@@ -42,9 +42,6 @@ public partial class Overworld : Node2D
         PlaceTown();
         PlaceForest();
         PlaceMountains();
-
-        _groundLayer.UpdateInternals();
-        _detailLayer.UpdateInternals();
     }
 
     private void FillGround(Vector2I atlasCoords)
@@ -62,7 +59,7 @@ public partial class Overworld : Node2D
     {
         FillGroundRect(new Rect2I(1, 20, 9, 8), WaterTile);
         FillGroundRect(new Rect2I(33, 0, 4, 12), WaterTile);
-        FillGroundRect(new Rect2I(34, 10, 3, 3), WaterTile);
+        FillGroundRect(new Rect2I(31, 10, 2, 3), WaterTile);
     }
 
     private void PlaceRoads()
