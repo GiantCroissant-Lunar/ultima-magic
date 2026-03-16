@@ -1,0 +1,44 @@
+{
+  "elder": {
+    "name": "Village Elder",
+    "lines": [
+      "Welcome to our village, traveler.",
+      "Beware the forests to the north — monsters lurk there.",
+      "May the light guide your path."
+    ]
+  },
+  "merchant": {
+    "name": "Road Merchant",
+    "lines": [
+      "Fresh wares for the long road ahead!",
+      "I patrol this route so the village never runs short on supplies."
+    ]
+  },
+  "scout": {
+    "name": "Town Scout",
+    "lines": [
+      "I make random rounds through town to keep watch.",
+      "If you find a chest in the woods, check it carefully before nightfall."
+    ]
+  },
+  "town_sign": {
+    "name": "Town Sign",
+    "lines": [
+      "Westwatch Village",
+      "Travelers welcome. Keep the northern road clear."
+    ]
+  },
+  "forest_chest_closed": {
+    "name": "Chest",
+    "lines": [
+      "You open the old chest.",
+      "Inside is a Healing Herb."
+    ]
+  },
+  "forest_chest_opened": {
+    "name": "Chest",
+    "lines": [
+      "The chest is empty now."
+    ]
+  }
+}
