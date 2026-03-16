@@ -1,5 +1,18 @@
 # Issue 10: Create Enemy System with Basic AI
 
+## GitHub Issue Draft
+
+- **Issue title:** Create enemy system with basic AI
+- **Suggested labels:** `enemy`, `ai`, `battle`, `data-model`, `priority-critical`
+- **Depends on:** #8, #9
+- **Agent handoff:** This issue is scoped so one coding agent can implement it independently once dependencies are done. Preserve placeholder art and temporary data where the acceptance criteria explicitly allow it.
+
+### Suggested starter files
+
+- `project/hosts/complete-app/Scripts/Data/`
+- `project/hosts/complete-app/Scripts/Battle/`
+- `project/hosts/complete-app/Resources/Enemies/`
+
 ## Summary
 
 Implement the enemy data model, a bestiary of enemy types, and basic AI behavior for enemies during combat. Enemies should have stats, abilities, sprites, and a simple decision-making system for choosing actions during their turn.

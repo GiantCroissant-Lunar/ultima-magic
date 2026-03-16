@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "title": "Set up C# project structure and solution",
+    "labels": [
+      "setup",
+      "infrastructure",
+      "priority-critical"
+    ],
+    "depends_on": [],
+    "file": "docs/issues/issue-01-project-structure.md"
+  },
+  {
+    "id": 2,
+    "title": "Create overworld tile map system",
+    "labels": [
+      "overworld",
+      "tilemap",
+      "priority-critical"
+    ],
+    "depends_on": [
+      1
+    ],
+    "file": "docs/issues/issue-02-overworld-tilemap.md"
+  },
+  {
+    "id": 3,
+    "title": "Implement player character and movement on overworld",
+    "labels": [
+      "overworld",
+      "player",
+      "movement",
+      "priority-critical"
+    ],
+    "depends_on": [
+      2
+    ],
+    "file": "docs/issues/issue-03-player-overworld.md"
+  },
+  {
+    "id": 4,
+    "title": "Add overworld NPCs and interactable objects",
+    "labels": [
+      "overworld",
+      "npc",
+      "interaction",
+      "priority-medium"
+    ],
+    "depends_on": [
+      3
+    ],
+    "file": "docs/issues/issue-04-overworld-npcs.md"
+  },
+  {
+    "id": 5,
+    "title": "Implement random encounter system",
+    "labels": [
+      "encounter",
+      "overworld",
+      "battle",
+      "priority-critical"
+    ],
+    "depends_on": [
+      3
+    ],
+    "file": "docs/issues/issue-05-random-encounters.md"
+  },
+  {
+    "id": 6,
+    "title": "Create first-person battle scene",
+    "labels": [
+      "battle",
+      "3d",
+      "scene",
+      "priority-critical"
+    ],
+    "depends_on": [
+      1
+    ],
+    "file": "docs/issues/issue-06-battle-scene.md"
+  },
+  {
+    "id": 7,
+    "title": "Implement scene transition between overworld and battle",
+    "labels": [
+      "scene-transition",
+      "overworld",
+      "battle",
+      "priority-critical"
+    ],
+    "depends_on": [
+      5,
+      6
+    ],
+    "file": "docs/issues/issue-07-scene-transition.md"
+  },
+  {
+    "id": 8,
+    "title": "Design character stats and data models",
+    "labels": [
+      "data-model",
+      "character",
+      "rpg",
+      "priority-critical"
+    ],
+    "depends_on": [
+      1
+    ],
+    "file": "docs/issues/issue-08-character-stats.md"
+  },
+  {
+    "id": 9,
+    "title": "Implement turn-based combat system",
+    "labels": [
+      "combat",
+      "battle",
+      "turn-based",
+      "priority-critical"
+    ],
+    "depends_on": [
+      6,
+      8
+    ],
+    "file": "docs/issues/issue-09-combat-system.md"
+  },
+  {
+    "id": 10,
+    "title": "Create enemy system with basic AI",
+    "labels": [
+      "enemy",
+      "ai",
+      "battle",
+      "data-model",
+      "priority-critical"
+    ],
+    "depends_on": [
+      8,
+      9
+    ],
+    "file": "docs/issues/issue-10-enemy-system.md"
+  }
+]

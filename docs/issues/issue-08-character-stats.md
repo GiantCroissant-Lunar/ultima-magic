@@ -1,5 +1,18 @@
 # Issue 8: Design Character Stats and Data Models
 
+## GitHub Issue Draft
+
+- **Issue title:** Design character stats and data models
+- **Suggested labels:** `data-model`, `character`, `rpg`, `priority-critical`
+- **Depends on:** #1
+- **Agent handoff:** This issue is scoped so one coding agent can implement it independently once dependencies are done. Preserve placeholder art and temporary data where the acceptance criteria explicitly allow it.
+
+### Suggested starter files
+
+- `project/hosts/complete-app/Scripts/Data/`
+- `project/hosts/complete-app/Resources/`
+- `project/hosts/complete-app/Tests/`
+
 ## Summary
 
 Implement the player character's RPG data model including stats, equipment, inventory, and leveling. These data models form the backbone of the combat system and progression mechanics.

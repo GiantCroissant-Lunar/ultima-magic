@@ -1,5 +1,18 @@
 # Issue 5: Implement Random Encounter System
 
+## GitHub Issue Draft
+
+- **Issue title:** Implement random encounter system
+- **Suggested labels:** `encounter`, `overworld`, `battle`, `priority-critical`
+- **Depends on:** #3
+- **Agent handoff:** This issue is scoped so one coding agent can implement it independently once dependencies are done. Preserve placeholder art and temporary data where the acceptance criteria explicitly allow it.
+
+### Suggested starter files
+
+- `project/hosts/complete-app/Scripts/Autoload/EncounterManager.cs`
+- `project/hosts/complete-app/Scripts/Data/`
+- `project/hosts/complete-app/Scenes/Overworld/`
+
 ## Summary
 
 Create a random encounter system that triggers battles while the player walks on the overworld. Different terrain types should have different encounter rates, and the encounter data (which enemies, difficulty) should be configurable per map region.

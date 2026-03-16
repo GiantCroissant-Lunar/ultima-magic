@@ -1,5 +1,18 @@
 # Issue 6: Create First-Person Battle Scene
 
+## GitHub Issue Draft
+
+- **Issue title:** Create first-person battle scene
+- **Suggested labels:** `battle`, `3d`, `scene`, `priority-critical`
+- **Depends on:** #1
+- **Agent handoff:** This issue is scoped so one coding agent can implement it independently once dependencies are done. Preserve placeholder art and temporary data where the acceptance criteria explicitly allow it.
+
+### Suggested starter files
+
+- `project/hosts/complete-app/Scenes/Battle/BattleScene.tscn`
+- `project/hosts/complete-app/Scripts/Battle/BattleScene.cs`
+- `project/hosts/complete-app/Resources/Sprites/`
+
 ## Summary
 
 Build the Might & Magic-style first-person battle scene. This is a 3D scene where the player views enemies from a first-person perspective. Enemies are displayed as 2D sprites (billboards) in a 3D environment, similar to classic Might & Magic games.

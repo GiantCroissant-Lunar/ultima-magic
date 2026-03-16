@@ -45,6 +45,8 @@ Issue 1: Project Structure
 
 ## Issues
 
+The files in [`docs/issues/`](issues/) are now written as **GitHub issue drafts**. Use [`docs/issues/README.md`](issues/README.md) for manual creation steps and [`docs/issues/manifest.json`](issues/manifest.json) for a machine-readable index.
+
 | #  | Title | Priority | Depends On |
 |----|-------|----------|------------|
 | 1  | [Set Up C# Project Structure and Solution](issues/issue-01-project-structure.md) | 🔴 Critical | — |

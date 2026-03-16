@@ -1,5 +1,18 @@
 # Issue 1: Set Up C# Project Structure and Solution
 
+## GitHub Issue Draft
+
+- **Issue title:** Set up C# project structure and solution
+- **Suggested labels:** `setup`, `infrastructure`, `priority-critical`
+- **Depends on:** None
+- **Agent handoff:** This issue is scoped so one coding agent can implement it independently once dependencies are done. Preserve placeholder art and temporary data where the acceptance criteria explicitly allow it.
+
+### Suggested starter files
+
+- `project/hosts/complete-app/project.godot`
+- `build/nuke/build/Build.cs`
+- `project/hosts/complete-app/Scripts/Autoload/`
+
 ## Summary
 
 Establish the foundational C# project structure for the Godot game. This includes creating the `.sln` and `.csproj` files, organizing the directory layout for scripts, scenes, and resources, and setting up autoload singletons that will be used across the project.

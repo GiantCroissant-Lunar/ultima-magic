@@ -1,5 +1,18 @@
 # Issue 2: Create Overworld Tile Map System
 
+## GitHub Issue Draft
+
+- **Issue title:** Create overworld tile map system
+- **Suggested labels:** `overworld`, `tilemap`, `priority-critical`
+- **Depends on:** #1
+- **Agent handoff:** This issue is scoped so one coding agent can implement it independently once dependencies are done. Preserve placeholder art and temporary data where the acceptance criteria explicitly allow it.
+
+### Suggested starter files
+
+- `project/hosts/complete-app/Scenes/Overworld/`
+- `project/hosts/complete-app/Resources/Tilesets/`
+- `project/hosts/complete-app/Resources/Sprites/tiles/`
+
 ## Summary
 
 Build the Ultima-style top-down tile map system for the overworld. Create tile sets representing different terrain types and assemble a sample overworld map that the player can explore.

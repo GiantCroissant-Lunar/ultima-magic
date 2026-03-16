@@ -1,5 +1,18 @@
 # Issue 7: Implement Scene Transition Between Overworld and Battle
 
+## GitHub Issue Draft
+
+- **Issue title:** Implement scene transition between overworld and battle
+- **Suggested labels:** `scene-transition`, `overworld`, `battle`, `priority-critical`
+- **Depends on:** #5, #6
+- **Agent handoff:** This issue is scoped so one coding agent can implement it independently once dependencies are done. Preserve placeholder art and temporary data where the acceptance criteria explicitly allow it.
+
+### Suggested starter files
+
+- `project/hosts/complete-app/Scripts/Autoload/SceneManager.cs`
+- `project/hosts/complete-app/Scripts/Autoload/GameManager.cs`
+- `project/hosts/complete-app/Scenes/Battle/BattleScene.tscn`
+
 ## Summary
 
 Create the system that transitions the game between the 2D overworld and the 3D first-person battle scene. This includes a visual transition effect (fade to black), passing encounter data from the overworld to the battle scene, and returning to the overworld after the battle ends.

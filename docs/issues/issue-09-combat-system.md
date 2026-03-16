@@ -1,5 +1,18 @@
 # Issue 9: Implement Turn-Based Combat System
 
+## GitHub Issue Draft
+
+- **Issue title:** Implement turn-based combat system
+- **Suggested labels:** `combat`, `battle`, `turn-based`, `priority-critical`
+- **Depends on:** #6, #8
+- **Agent handoff:** This issue is scoped so one coding agent can implement it independently once dependencies are done. Preserve placeholder art and temporary data where the acceptance criteria explicitly allow it.
+
+### Suggested starter files
+
+- `project/hosts/complete-app/Scripts/Battle/`
+- `project/hosts/complete-app/Scenes/UI/`
+- `project/hosts/complete-app/Scenes/Battle/BattleScene.tscn`
+
 ## Summary
 
 Create the core turn-based combat loop for the first-person battle scene. The player selects actions from a menu, enemies take their turns, and the battle continues until one side is defeated or the player flees. The player controls a single character.

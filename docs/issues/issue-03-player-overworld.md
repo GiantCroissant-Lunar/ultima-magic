@@ -1,5 +1,18 @@
 # Issue 3: Implement Player Character and Movement on Overworld
 
+## GitHub Issue Draft
+
+- **Issue title:** Implement player character and movement on overworld
+- **Suggested labels:** `overworld`, `player`, `movement`, `priority-critical`
+- **Depends on:** #2
+- **Agent handoff:** This issue is scoped so one coding agent can implement it independently once dependencies are done. Preserve placeholder art and temporary data where the acceptance criteria explicitly allow it.
+
+### Suggested starter files
+
+- `project/hosts/complete-app/Scenes/Overworld/Player.tscn`
+- `project/hosts/complete-app/Scripts/Overworld/Player.cs`
+- `project/hosts/complete-app/project.godot`
+
 ## Summary
 
 Create the player character for the overworld and implement grid-based (tile-aligned) movement controlled by keyboard input. The player should move one tile at a time in four directions, with smooth interpolated movement between tiles.

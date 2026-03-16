@@ -1,5 +1,18 @@
 # Issue 4: Add Overworld NPCs and Interactable Objects
 
+## GitHub Issue Draft
+
+- **Issue title:** Add overworld NPCs and interactable objects
+- **Suggested labels:** `overworld`, `npc`, `interaction`, `priority-medium`
+- **Depends on:** #3
+- **Agent handoff:** This issue is scoped so one coding agent can implement it independently once dependencies are done. Preserve placeholder art and temporary data where the acceptance criteria explicitly allow it.
+
+### Suggested starter files
+
+- `project/hosts/complete-app/Scenes/Overworld/`
+- `project/hosts/complete-app/Scripts/Overworld/`
+- `project/hosts/complete-app/Scenes/UI/`
+
 ## Summary
 
 Create an NPC system and interactable objects for the overworld. NPCs should stand on tiles with optional movement patterns and display dialogue when the player interacts with them. Interactable objects (signs, chests, doors) should respond to player interaction.
