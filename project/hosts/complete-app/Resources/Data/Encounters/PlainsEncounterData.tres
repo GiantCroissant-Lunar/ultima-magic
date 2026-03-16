@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EncounterData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/EncounterData.cs" id="1_encounter_data"]
+[ext_resource type="Script" path="res://Scripts/Data/EnemyGroup.cs" id="2_enemy_group"]
+
+[sub_resource type="Resource" id="1_slime_pair"]
+script = ExtResource("2_enemy_group")
+EnemyTypes = PackedStringArray("Green Slime", "Blue Slime")
+MinCount = 1
+MaxCount = 3
+Weight = 4.0
+
+[sub_resource type="Resource" id="2_bandit_scouts"]
+script = ExtResource("2_enemy_group")
+EnemyTypes = PackedStringArray("Bandit Scout", "Bandit Archer")
+MinCount = 2
+MaxCount = 4
+Weight = 1.5
+
+[resource]
+script = ExtResource("1_encounter_data")
+PossibleGroups = Array[Resource]([SubResource("1_slime_pair"), SubResource("2_bandit_scouts")])

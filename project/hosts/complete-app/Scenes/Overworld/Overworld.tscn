@@ -1,8 +1,13 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://Scripts/Overworld/Overworld.cs" id="1_script"]
 [ext_resource type="TileSet" path="res://Resources/Tilesets/OverworldTiles.tres" id="2_tileset"]
 [ext_resource type="PackedScene" path="res://Scenes/Overworld/Player.tscn" id="3_player"]
+[ext_resource type="Script" path="res://Scripts/Overworld/EncounterZone.cs" id="4_zone"]
+[ext_resource type="Resource" path="res://Resources/Data/Encounters/ForestEncounterData.tres" id="5_forest_data"]
+[ext_resource type="Resource" path="res://Resources/Data/Encounters/PlainsEncounterData.tres" id="6_plains_data"]
+[ext_resource type="Resource" path="res://Resources/Data/Encounters/FoothillsEncounterData.tres" id="7_foothills_data"]
+[ext_resource type="Resource" path="res://Resources/Data/Encounters/TownEncounterData.tres" id="8_town_data"]
 
 [node name="Overworld" type="Node2D"]
 script = ExtResource("1_script")
@@ -23,3 +28,37 @@ z_index = 1
 
 [node name="Player" parent="." instance=ExtResource("3_player")]
 position = Vector2(208, 496)
+
+[node name="EncounterZones" type="Node" parent="."]
+
+[node name="Forest" type="Node" parent="EncounterZones"]
+script = ExtResource("4_zone")
+ZoneName = "Forest of Echoes"
+BaseEncounterRate = 0.08
+Priority = 20
+TileRegion = Rect2i(4, 4, 10, 10)
+EncounterData = ExtResource("5_forest_data")
+
+[node name="Foothills" type="Node" parent="EncounterZones"]
+script = ExtResource("4_zone")
+ZoneName = "Stone Foothills"
+BaseEncounterRate = 0.06
+Priority = 10
+TileRegion = Rect2i(17, 16, 18, 9)
+EncounterData = ExtResource("7_foothills_data")
+
+[node name="Town" type="Node" parent="EncounterZones"]
+script = ExtResource("4_zone")
+ZoneName = "Moonbrook"
+BaseEncounterRate = 0.0
+Priority = 30
+TileRegion = Rect2i(25, 5, 8, 6)
+EncounterData = ExtResource("8_town_data")
+
+[node name="Plains" type="Node" parent="EncounterZones"]
+script = ExtResource("4_zone")
+ZoneName = "Moonlit Plains"
+BaseEncounterRate = 0.04
+Priority = 0
+TileRegion = Rect2i(0, 0, 40, 30)
+EncounterData = ExtResource("6_plains_data")
