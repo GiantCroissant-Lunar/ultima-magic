@@ -1,12 +1,10 @@
 using Godot;
+using UltimaMagic.UI;
 
 namespace UltimaMagic.Overworld;
 
 public partial class Player : CharacterBody2D
 {
-    private const float TileCenterOffset = 0.5f;
-    private const string WalkableCustomDataKey = "walkable";
-
     [Export]
     public int TileSize { get; set; } = 32;
 
@@ -14,6 +12,7 @@ public partial class Player : CharacterBody2D
     public float MoveSpeed { get; set; } = 4.0f;
 
     public Vector2I TilePosition { get; private set; }
+    public Vector2I FacingDirection { get; private set; } = Vector2I.Down;
     public bool IsMoving { get; private set; }
     public int StepsTaken { get; private set; }
 
@@ -27,14 +26,31 @@ public partial class Player : CharacterBody2D
         _rayCast = GetNode<RayCast2D>("RayCast2D");
         _groundLayer = GetParent().GetNode<TileMapLayer>("TileMap/GroundLayer");
         _detailLayer = GetParent().GetNode<TileMapLayer>("TileMap/DetailLayer");
+        TileSize = OverworldGrid.ResolveTileSize(_groundLayer, TileSize);
 
-        TilePosition = WorldToTile(Position);
-        Position = TileToWorld(TilePosition);
+        AddToGroup(OverworldGrid.TileBlockerGroup);
+
+        TilePosition = OverworldGrid.WorldToTile(Position, TileSize);
+        Position = OverworldGrid.TileToWorld(TilePosition, TileSize);
     }
 
     public override void _Process(double delta)
     {
-        if (IsMoving)
+        if (Input.IsActionJustPressed("interact"))
+        {
+            if (DialogueBox.Instance?.IsOpen == true)
+            {
+                DialogueBox.Instance.AdvanceLine();
+            }
+            else
+            {
+                TryInteract();
+            }
+
+            return;
+        }
+
+        if (IsMoving || DialogueBox.Instance?.IsOpen == true)
         {
             return;
         }
@@ -42,6 +58,7 @@ public partial class Player : CharacterBody2D
         var direction = GetInputDirection();
         if (direction != Vector2I.Zero)
         {
+            FacingDirection = direction;
             TryMove(direction);
         }
     }
@@ -68,7 +85,9 @@ public partial class Player : CharacterBody2D
     private void TryMove(Vector2I direction)
     {
         var targetTile = TilePosition + direction;
-        if (!IsWithinMap(targetTile) || !IsWalkable(targetTile))
+        if (!OverworldGrid.IsWithinMap(_groundLayer, targetTile)
+            || !OverworldGrid.IsWalkable(_groundLayer, _detailLayer, targetTile)
+            || OverworldGrid.HasTileBlocker(GetTree(), targetTile, TileSize))
         {
             return;
         }
@@ -92,7 +111,7 @@ public partial class Player : CharacterBody2D
 
         _moveTween = CreateTween();
         _moveTween
-            .TweenProperty(this, "position", TileToWorld(targetTile), 1.0d / MoveSpeed)
+            .TweenProperty(this, "position", OverworldGrid.TileToWorld(targetTile, TileSize), 1.0d / MoveSpeed)
             .SetTrans(Tween.TransitionType.Sine)
             .SetEase(Tween.EaseType.InOut);
         _moveTween.TweenCallback(Callable.From(OnMoveFinished));
@@ -101,40 +120,14 @@ public partial class Player : CharacterBody2D
     private void OnMoveFinished()
     {
         _moveTween = null;
-        Position = TileToWorld(TilePosition);
+        Position = OverworldGrid.TileToWorld(TilePosition, TileSize);
         IsMoving = false;
         StepsTaken++;
     }
 
-    private bool IsWithinMap(Vector2I tile)
+    private void TryInteract()
     {
-        return _groundLayer.GetCellSourceId(tile) != -1;
-    }
-
-    private bool IsWalkable(Vector2I tile)
-    {
-        return IsLayerWalkable(_groundLayer, tile) && IsLayerWalkable(_detailLayer, tile);
-    }
-
-    private static bool IsLayerWalkable(TileMapLayer layer, Vector2I tile)
-    {
-        var tileData = layer.GetCellTileData(tile);
-        return tileData == null
-            || (tileData.HasCustomData(WalkableCustomDataKey)
-                && tileData.GetCustomData(WalkableCustomDataKey).AsBool());
-    }
-
-    private Vector2I WorldToTile(Vector2 worldPosition)
-    {
-        return new Vector2I(
-            Mathf.RoundToInt((worldPosition.X - (TileSize * TileCenterOffset)) / TileSize),
-            Mathf.RoundToInt((worldPosition.Y - (TileSize * TileCenterOffset)) / TileSize));
-    }
-
-    private Vector2 TileToWorld(Vector2I tilePosition)
-    {
-        return new Vector2(
-            (tilePosition.X + TileCenterOffset) * TileSize,
-            (tilePosition.Y + TileCenterOffset) * TileSize);
+        var targetTile = TilePosition + FacingDirection;
+        OverworldGrid.FindInteractable(GetTree(), targetTile, TileSize)?.Interact(this);
     }
 }
