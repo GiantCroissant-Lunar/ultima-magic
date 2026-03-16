@@ -14,9 +14,6 @@ public partial class EncounterManager : Node
     public static EncounterManager? Instance { get; private set; }
 
     [Export]
-    public float BaseEncounterRate { get; set; } = 0.05f;
-
-    [Export]
     public int GuaranteedSafeSteps { get; set; } = 5;
 
     [Export]
@@ -88,10 +85,17 @@ public partial class EncounterManager : Node
 
     private void OnPlayerStep(Vector2I tilePosition)
     {
-        _stepsSinceLastEncounter++;
-
         var zone = ResolveCurrentZone(tilePosition);
         CurrentZoneName = zone?.ZoneName ?? "None";
+
+        if (!CanAttemptEncounter(zone, tilePosition))
+        {
+            CurrentEncounterProbability = 0.0f;
+            UpdateDebugOverlay();
+            return;
+        }
+
+        _stepsSinceLastEncounter++;
         CurrentEncounterProbability = CalculateEncounterProbability(zone, tilePosition);
 
         if (CurrentEncounterProbability > 0.0f && zone?.EncounterData != null && _rng.Randf() < CurrentEncounterProbability)
@@ -121,7 +125,7 @@ public partial class EncounterManager : Node
         }
 
         var tileEncounterMultiplier = OverworldGrid.GetEncounterMultiplier(_groundLayer, _detailLayer, tilePosition);
-        if (tileEncounterMultiplier <= 0.0f || zone.BaseEncounterRate <= 0.0f)
+        if (tileEncounterMultiplier <= 0.0f || zone.BaseEncounterRate <= 0.0f || !HasValidEncounterGroups(zone.EncounterData))
         {
             return 0.0f;
         }
@@ -134,6 +138,21 @@ public partial class EncounterManager : Node
         return Mathf.Clamp(probability, 0.0f, 1.0f);
     }
 
+    private bool CanAttemptEncounter(EncounterZone? zone, Vector2I tilePosition)
+    {
+        if (_groundLayer == null || _detailLayer == null || zone?.EncounterData == null)
+        {
+            return false;
+        }
+
+        if (zone.BaseEncounterRate <= 0.0f || !HasValidEncounterGroups(zone.EncounterData))
+        {
+            return false;
+        }
+
+        return OverworldGrid.GetEncounterMultiplier(_groundLayer, _detailLayer, tilePosition) > 0.0f;
+    }
+
     private EncounterResult? RollEncounter(EncounterZone zone, Vector2I tilePosition)
     {
         if (_groundLayer == null || _detailLayer == null || zone.EncounterData == null)
@@ -141,9 +160,7 @@ public partial class EncounterManager : Node
             return null;
         }
 
-        var possibleGroups = zone.EncounterData.PossibleGroups
-            .Where(group => group != null && group.Weight > 0.0f && group.EnemyTypes.Length > 0)
-            .ToArray();
+        var possibleGroups = GetValidEncounterGroups(zone.EncounterData);
 
         if (possibleGroups.Length == 0)
         {
@@ -183,6 +200,18 @@ public partial class EncounterManager : Node
             EnemyCount = enemyCount,
             PlayerReturnPosition = tilePosition
         };
+    }
+
+    private static bool HasValidEncounterGroups(EncounterData encounterData)
+    {
+        return GetValidEncounterGroups(encounterData).Length > 0;
+    }
+
+    private static EnemyGroup[] GetValidEncounterGroups(EncounterData encounterData)
+    {
+        return encounterData.PossibleGroups
+            .Where(group => group != null && group.Weight > 0.0f && group.EnemyTypes.Length > 0)
+            .ToArray();
     }
 
     private EncounterZone? ResolveCurrentZone(Vector2I tilePosition)

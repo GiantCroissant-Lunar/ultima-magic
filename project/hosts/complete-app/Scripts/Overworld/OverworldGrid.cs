@@ -119,8 +119,20 @@ public static class OverworldGrid
 
     private static bool IsLayerWalkable(TileMapLayer layer, Vector2I tile)
     {
-        var walkable = GetLayerCustomData(layer, tile, WalkableCustomDataKey);
-        return walkable == null || walkable.Value.AsBool();
+        var tileData = layer.GetCellTileData(tile);
+        if (tileData == null)
+        {
+            // Empty cells on the layer do not add an obstacle, but authored tiles must explicitly opt into walkability.
+            return true;
+        }
+
+        if (!tileData.HasCustomData(WalkableCustomDataKey))
+        {
+            return false;
+        }
+
+        var walkable = tileData.GetCustomData(WalkableCustomDataKey);
+        return walkable.VariantType == Variant.Type.Bool && walkable.AsBool();
     }
 
     private static Variant? GetLayerCustomData(TileMapLayer layer, Vector2I tile, string customDataKey)
