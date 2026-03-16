@@ -1,26 +1,35 @@
 using System;
+using System.Threading.Tasks;
 using Godot;
 using UltimaMagic.Data;
+using UltimaMagic.Overworld;
 
 namespace UltimaMagic.Autoload;
 
 public partial class SceneManager : Node
 {
     private const string BattleScenePath = "res://Scenes/Battle/BattleScene.tscn";
+    private const string OverworldScenePath = "res://Scenes/Overworld/Overworld.tscn";
     private const int MaxEncounterManagerConnectionAttempts = 10;
     private const double EncounterManagerRetryDelaySeconds = 1.0d;
+    private const double FadeDurationSeconds = 0.5d;
+    private const int TransitionLayer = 100;
 
     public static SceneManager? Instance { get; private set; }
-    public EncounterResult? PendingEncounter { get; private set; }
+    public BattleTransitionData? PendingBattleTransition { get; private set; }
 
     private Godot.Timer? _encounterManagerRetryTimer;
+    private ColorRect _fadeRect = null!;
     private bool _encounterManagerConnected;
     private int _encounterManagerConnectionAttempts;
     private bool _encounterManagerMissingLogged;
+    private bool _isTransitioning;
 
     public override void _Ready()
     {
         Instance = this;
+        SetupTransitionOverlay();
+
         _encounterManagerRetryTimer = new Godot.Timer
         {
             WaitTime = EncounterManagerRetryDelaySeconds,
@@ -50,22 +59,67 @@ public partial class SceneManager : Node
         }
     }
 
-    public void TransitionToBattle(EncounterResult encounterData)
+    public async void TransitionToBattle(EncounterResult encounterData)
     {
-        PendingEncounter = encounterData;
-        GD.Print($"Encounter triggered in zone '{encounterData.ZoneName}' on terrain '{encounterData.TerrainType}' with {encounterData.EnemyCount} enemies.");
-        if (GameManager.Instance != null)
+        ArgumentNullException.ThrowIfNull(encounterData);
+
+        if (_isTransitioning)
         {
-            GameManager.Instance.CurrentState = GameManager.GameState.Battle;
+            return;
         }
-        CallDeferred(nameof(ChangeScene), BattleScenePath);
+
+        var playerState = GameManager.Instance?.CreatePlayerStateSnapshot(encounterData.PlayerReturnPosition)
+            ?? new PlayerStateSnapshot { ReturnPosition = encounterData.PlayerReturnPosition };
+
+        PendingBattleTransition = new BattleTransitionData
+        {
+            Encounter = encounterData,
+            PlayerState = playerState
+        };
+
+        GD.Print($"Encounter triggered in zone '{encounterData.ZoneName}' on terrain '{encounterData.TerrainType}' with {encounterData.EnemyCount} enemies.");
+        await RunSceneTransition(BattleScenePath, GameManager.GameState.Battle, null);
     }
 
-    public EncounterResult? ConsumePendingEncounter()
+    public async void TransitionToOverworld(BattleResult battleResult)
     {
-        var encounter = PendingEncounter;
-        PendingEncounter = null;
-        return encounter;
+        ArgumentNullException.ThrowIfNull(battleResult);
+
+        if (_isTransitioning)
+        {
+            return;
+        }
+
+        await RunSceneTransition(
+            OverworldScenePath,
+            GameManager.GameState.Overworld,
+            () => RestoreOverworldState(battleResult));
+    }
+
+    public BattleTransitionData? ConsumePendingBattleTransition()
+    {
+        var transitionData = PendingBattleTransition;
+        PendingBattleTransition = null;
+        return transitionData;
+    }
+
+    private void SetupTransitionOverlay()
+    {
+        var canvasLayer = new CanvasLayer
+        {
+            Layer = TransitionLayer
+        };
+
+        _fadeRect = new ColorRect
+        {
+            Name = "SceneFadeRect",
+            Color = new Color(0.0f, 0.0f, 0.0f, 0.0f),
+            MouseFilter = Control.MouseFilterEnum.Ignore
+        };
+        _fadeRect.SetAnchorsPreset(Control.LayoutPreset.FullRect);
+
+        canvasLayer.AddChild(_fadeRect);
+        AddChild(canvasLayer);
     }
 
     private void ConnectEncounterManager()
@@ -119,5 +173,55 @@ public partial class SceneManager : Node
     private void OnEncounterManagerRetryTimeout()
     {
         ConnectEncounterManager();
+    }
+
+    private async Task RunSceneTransition(string scenePath, GameManager.GameState targetState, Action? postSceneChange)
+    {
+        if (_isTransitioning)
+        {
+            return;
+        }
+
+        _isTransitioning = true;
+        GameManager.Instance?.SetInputEnabled(false);
+        _fadeRect.MouseFilter = Control.MouseFilterEnum.Stop;
+
+        try
+        {
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.CurrentState = targetState;
+            }
+
+            await FadeToAsync(1.0f);
+            ChangeScene(scenePath);
+            // Wait one frame so the newly loaded scene finishes entering the tree and nodes like Player exist before RestoreOverworldState runs.
+            await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+            postSceneChange?.Invoke();
+            await FadeToAsync(0.0f);
+        }
+        finally
+        {
+            _fadeRect.MouseFilter = Control.MouseFilterEnum.Ignore;
+            GameManager.Instance?.SetInputEnabled(true);
+            _isTransitioning = false;
+        }
+    }
+
+    private async Task FadeToAsync(float targetAlpha)
+    {
+        var tween = CreateTween();
+        tween.TweenProperty(_fadeRect, "color:a", targetAlpha, FadeDurationSeconds);
+        await ToSignal(tween, Tween.SignalName.Finished);
+    }
+
+    private void RestoreOverworldState(BattleResult battleResult)
+    {
+        GameManager.Instance?.ApplyBattleResult(battleResult);
+
+        var player = GetTree().CurrentScene?.GetNodeOrNull<Player>("Player");
+        player?.SnapToTile(battleResult.PlayerReturnPosition);
+
+        EncounterManager.Instance?.ResetEncounterCounter();
     }
 }

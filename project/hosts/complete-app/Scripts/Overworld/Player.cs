@@ -1,4 +1,5 @@
 using Godot;
+using UltimaMagic.Autoload;
 using UltimaMagic.UI;
 
 namespace UltimaMagic.Overworld;
@@ -39,6 +40,11 @@ public partial class Player : CharacterBody2D
 
     public override void _Process(double delta)
     {
+        if (GameManager.Instance?.IsInputEnabled == false)
+        {
+            return;
+        }
+
         if (Input.IsActionJustPressed("interact"))
         {
             if (DialogueBox.Instance?.IsOpen == true)
@@ -127,6 +133,15 @@ public partial class Player : CharacterBody2D
         IsMoving = false;
         StepsTaken++;
         EmitSignal(SignalName.StepTaken, TilePosition);
+    }
+
+    public void SnapToTile(Vector2I tilePosition)
+    {
+        _moveTween?.Kill();
+        _moveTween = null;
+        TilePosition = tilePosition;
+        Position = OverworldGrid.TileToWorld(tilePosition, TileSize);
+        IsMoving = false;
     }
 
     private void TryInteract()
