@@ -26,6 +26,7 @@ public partial class Player : CharacterBody2D
         _rayCast = GetNode<RayCast2D>("RayCast2D");
         _groundLayer = GetParent().GetNode<TileMapLayer>("TileMap/GroundLayer");
         _detailLayer = GetParent().GetNode<TileMapLayer>("TileMap/DetailLayer");
+        TileSize = OverworldGrid.ResolveTileSize(_groundLayer, TileSize);
 
         AddToGroup(OverworldGrid.TileBlockerGroup);
 

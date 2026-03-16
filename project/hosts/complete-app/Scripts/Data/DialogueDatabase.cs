@@ -57,6 +57,11 @@ public static class DialogueDatabase
             var json = Godot.FileAccess.GetFileAsString(DialogueDataPath);
             _entries = JsonSerializer.Deserialize<Dictionary<string, DialogueEntry>>(json, JsonOptions)
                 ?? new Dictionary<string, DialogueEntry>();
+
+            foreach (var (key, value) in _entries)
+            {
+                _entries[key] = NormalizeEntry(value);
+            }
         }
         catch (JsonException exception)
         {
@@ -70,5 +75,19 @@ public static class DialogueDatabase
         public string Name { get; set; } = "Narrator";
 
         public string[] Lines { get; set; } = Array.Empty<string>();
+    }
+
+    private static DialogueEntry NormalizeEntry(DialogueEntry? entry)
+    {
+        if (entry == null)
+        {
+            GD.PushError("Encountered a null dialogue entry while loading dialogue data. Falling back to a default entry.");
+        }
+
+        return new DialogueEntry
+        {
+            Name = string.IsNullOrWhiteSpace(entry?.Name) ? "Narrator" : entry.Name,
+            Lines = entry?.Lines ?? Array.Empty<string>()
+        };
     }
 }

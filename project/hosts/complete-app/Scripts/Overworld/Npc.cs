@@ -27,7 +27,8 @@ public partial class Npc : CharacterBody2D, IInteractable
     [Export]
     public MovementPattern Pattern { get; set; } = MovementPattern.Stationary;
 
-    public Vector2I[] PatrolWaypoints { get; set; } = [];
+    [Export]
+    public Godot.Collections.Array<Vector2I> PatrolWaypoints { get; set; } = [];
 
     [Export]
     public int TileSize { get; set; } = 32;
@@ -55,6 +56,7 @@ public partial class Npc : CharacterBody2D, IInteractable
         _sprite = GetNode<Sprite2D>("Sprite2D");
         _groundLayer = GetParent().GetNode<TileMapLayer>("TileMap/GroundLayer");
         _detailLayer = GetParent().GetNode<TileMapLayer>("TileMap/DetailLayer");
+        TileSize = OverworldGrid.ResolveTileSize(_groundLayer, TileSize);
 
         var interactionArea = GetNode<Area2D>("InteractionArea");
         interactionArea.BodyEntered += OnInteractionAreaBodyEntered;
@@ -105,14 +107,14 @@ public partial class Npc : CharacterBody2D, IInteractable
 
     private void TryPatrolMove()
     {
-        if (PatrolWaypoints.Length < 2)
+        if (PatrolWaypoints.Count < 2)
         {
             return;
         }
 
         if (_tilePosition == PatrolWaypoints[_patrolIndex])
         {
-            _patrolIndex = (_patrolIndex + 1) % PatrolWaypoints.Length;
+            _patrolIndex = (_patrolIndex + 1) % PatrolWaypoints.Count;
         }
 
         var targetTile = PatrolWaypoints[_patrolIndex];

@@ -31,8 +31,7 @@
   "forest_chest_closed": {
     "name": "Chest",
     "lines": [
-      "You open the old chest.",
-      "Inside is a Healing Herb."
+      "You open the old chest."
     ]
   },
   "forest_chest_opened": {

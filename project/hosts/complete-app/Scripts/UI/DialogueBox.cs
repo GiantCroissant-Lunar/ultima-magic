@@ -20,8 +20,13 @@ public partial class DialogueBox : Control
     public override void _Ready()
     {
         Instance = this;
-        SpeakerLabel ??= GetNode<Label>("Panel/MarginContainer/VBoxContainer/SpeakerLabel");
-        TextLabel ??= GetNode<Label>("Panel/MarginContainer/VBoxContainer/TextLabel");
+        SpeakerLabel ??= GetNodeOrNull<Label>("Panel/MarginContainer/VBoxContainer/SpeakerLabel");
+        TextLabel ??= GetNodeOrNull<Label>("Panel/MarginContainer/VBoxContainer/TextLabel");
+        if (SpeakerLabel == null || TextLabel == null)
+        {
+            GD.PushError("DialogueBox is missing its label references. Check DialogueBox.tscn node paths or exported references.");
+        }
+
         Hide();
     }
 
@@ -37,6 +42,7 @@ public partial class DialogueBox : Control
     {
         if (SpeakerLabel == null || TextLabel == null)
         {
+            GD.PushError("DialogueBox cannot show dialogue because its label references are not configured.");
             return;
         }
 

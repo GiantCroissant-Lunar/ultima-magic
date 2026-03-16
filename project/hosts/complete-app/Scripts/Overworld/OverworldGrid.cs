@@ -4,6 +4,7 @@ namespace UltimaMagic.Overworld;
 
 public static class OverworldGrid
 {
+    public const int DefaultTileSize = 32;
     public const float TileCenterOffset = 0.5f;
     public const string WalkableCustomDataKey = "walkable";
     public const string InteractableGroup = "interactable";
@@ -26,6 +27,30 @@ public static class OverworldGrid
     public static bool IsWithinMap(TileMapLayer groundLayer, Vector2I tile)
     {
         return groundLayer.GetCellSourceId(tile) != -1;
+    }
+
+    public static int ResolveTileSize(TileMapLayer layer, int fallbackTileSize = DefaultTileSize)
+    {
+        var tileSet = layer.TileSet;
+        if (tileSet == null)
+        {
+            GD.PushError($"TileMapLayer '{layer.Name}' is missing a TileSet. Falling back to tile size {fallbackTileSize}.");
+            return fallbackTileSize;
+        }
+
+        var tileSize = tileSet.TileSize;
+        if (tileSize.X <= 0 || tileSize.Y <= 0)
+        {
+            GD.PushError($"TileSet '{tileSet.ResourcePath}' has invalid tile size {tileSize}. Falling back to tile size {fallbackTileSize}.");
+            return fallbackTileSize;
+        }
+
+        if (tileSize.X != tileSize.Y)
+        {
+            GD.PushWarning($"TileSet '{tileSet.ResourcePath}' uses non-square tiles {tileSize}. Using X dimension {tileSize.X} for overworld grid calculations.");
+        }
+
+        return tileSize.X;
     }
 
     public static bool IsWalkable(TileMapLayer groundLayer, TileMapLayer detailLayer, Vector2I tile)
