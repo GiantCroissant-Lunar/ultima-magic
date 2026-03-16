@@ -19,7 +19,7 @@ The overworld is the primary exploration mode of the game, inspired by classic U
   - Town/Building entrance (walkable, triggers town entry)
 - [ ] Each tile is **16×16** or **32×32** pixels (consistent size across all tiles).
 - [ ] Placeholder pixel art or colored squares are used for tiles (does not need to be final art).
-- [ ] A `TileMapLayer` node is used (Godot 4.6 uses `TileMapLayer` instead of the deprecated `TileMap`).
+- [ ] A `TileMap` node with `TileMapLayer` children is used (Godot 4.6 architecture for multi-layer tile maps).
 - [ ] Navigation/collision layers are configured so non-walkable tiles block the player.
 - [ ] A sample overworld map scene (`Overworld.tscn`) is created that is at least **40×30 tiles** in size.
 - [ ] The map includes at least one town area, one forest area, one mountain range, and water features.

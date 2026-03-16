@@ -36,9 +36,10 @@ A well-designed data model is essential before implementing the combat system. T
   - Stat increases on level up (configurable per stat)
   - `LevelUp()` method that checks experience and applies stat gains
 - [ ] A **damage formula** is defined and documented:
-  - Physical: `damage = attacker.Strength * attackPower - defender.Defense * 0.5`
-  - Magical: `damage = attacker.Intelligence * spellPower - defender.Intelligence * 0.3`
+  - Physical: `damage = attacker.EffectiveStrength * attackPower - defender.EffectiveDefense / 2`
+  - Magical: `damage = attacker.Intelligence * spellPower - defender.Intelligence * 3 / 10`
   - Critical hit: `damage * 1.5` (chance based on Luck)
+  - Minimum damage is always 1 (attacks never deal zero damage)
 - [ ] Default starting character stats are defined as a `.tres` resource file.
 - [ ] Unit tests or a test scene verifies:
   - Damage calculations produce expected results

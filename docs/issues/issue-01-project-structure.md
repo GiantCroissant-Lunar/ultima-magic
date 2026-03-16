@@ -11,7 +11,7 @@ A well-organized project structure is essential before any game logic can be wri
 ## Acceptance Criteria
 
 - [ ] A `complete-app.sln` solution file exists at `project/hosts/complete-app/` and can be opened in an IDE (Rider, VS Code, Visual Studio).
-- [ ] A `complete-app.csproj` file exists and targets `.NET 8.0` (or the version required by Godot 4.6 Mono).
+- [ ] A `complete-app.csproj` file exists and targets `.NET 8.0` (required by Godot 4.6 Mono).
 - [ ] The following directory structure is created under `project/hosts/complete-app/`:
   ```
   Scripts/
