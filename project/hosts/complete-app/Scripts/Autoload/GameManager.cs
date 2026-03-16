@@ -19,6 +19,7 @@ public partial class GameManager : Node
     public override void _Ready()
     {
         Instance = this;
+        SetProcess(false);
     }
 
     public override void _Process(double delta)
