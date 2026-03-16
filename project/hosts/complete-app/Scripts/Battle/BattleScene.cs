@@ -116,16 +116,23 @@ public partial class BattleScene : Node3D
 
     public void LoadEnemies(EnemyBattleData[] enemies)
     {
-        var safeEnemies = enemies ?? Array.Empty<EnemyBattleData>();
+        ArgumentNullException.ThrowIfNull(enemies);
+        for (var index = 0; index < enemies.Length; index++)
+        {
+            if (enemies[index] == null)
+            {
+                throw new ArgumentException($"Enemy at index {index} must not be null.", nameof(enemies));
+            }
+        }
 
         for (var index = 0; index < _enemySlots.Length; index++)
         {
             var slot = _enemySlots[index];
             var state = _enemyStates[index];
 
-            if (index < safeEnemies.Length)
+            if (index < enemies.Length)
             {
-                var enemy = safeEnemies[index] ?? new EnemyBattleData();
+                var enemy = enemies[index];
                 slot.Texture = enemy.Sprite ?? _defaultEnemyTexture;
                 slot.Visible = slot.Texture != null;
                 slot.Position = state.BasePosition;
@@ -148,11 +155,7 @@ public partial class BattleScene : Node3D
 
     public void LoadEncounter(EncounterResult encounter)
     {
-        if (encounter == null)
-        {
-            LoadEnemies(Array.Empty<EnemyBattleData>());
-            return;
-        }
+        ArgumentNullException.ThrowIfNull(encounter);
 
         var encounterEnemyCount = encounter.EnemyCount > 0 ? encounter.EnemyCount : encounter.EnemyTypes.Length;
         var clampedCount = Math.Clamp(encounterEnemyCount, 0, _enemySlots.Length);
