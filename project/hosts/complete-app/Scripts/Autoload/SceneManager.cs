@@ -6,6 +6,7 @@ namespace UltimaMagic.Autoload;
 
 public partial class SceneManager : Node
 {
+    private const string BattleScenePath = "res://Scenes/Battle/BattleScene.tscn";
     private const int MaxEncounterManagerConnectionAttempts = 10;
     private const double EncounterManagerRetryDelaySeconds = 1.0d;
 
@@ -53,6 +54,18 @@ public partial class SceneManager : Node
     {
         PendingEncounter = encounterData;
         GD.Print($"Encounter triggered in zone '{encounterData.ZoneName}' on terrain '{encounterData.TerrainType}' with {encounterData.EnemyCount} enemies.");
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.CurrentState = GameManager.GameState.Battle;
+        }
+        CallDeferred(MethodName.ChangeScene, BattleScenePath);
+    }
+
+    public EncounterResult? ConsumePendingEncounter()
+    {
+        var encounter = PendingEncounter;
+        PendingEncounter = null;
+        return encounter;
     }
 
     private void ConnectEncounterManager()
