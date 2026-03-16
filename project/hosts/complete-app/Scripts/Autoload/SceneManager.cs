@@ -194,6 +194,7 @@ public partial class SceneManager : Node
 
             await FadeToAsync(1.0f);
             ChangeScene(scenePath);
+            // Wait one frame so the newly loaded scene finishes entering the tree and nodes like Player exist before RestoreOverworldState runs.
             await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
             postSceneChange?.Invoke();
             await FadeToAsync(0.0f);

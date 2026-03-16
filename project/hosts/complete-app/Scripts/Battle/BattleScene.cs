@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 using UltimaMagic.Autoload;
 using UltimaMagic.Data;
@@ -18,6 +19,7 @@ public partial class BattleScene : Node3D
     private const float DeathFadeDurationSeconds = 0.45f;
     private const float DeathDropDistance = 0.45f;
     private const float DeathFallAngleDegrees = 70.0f;
+    private const string DefaultInteractPrompt = "the interact key";
 
     private static readonly Vector3[] EnemySlotPositions =
     [
@@ -86,7 +88,7 @@ public partial class BattleScene : Node3D
         {
             ApplyTerrainVisuals("preview");
             LoadEnemies(CreatePreviewEnemies(4));
-            _battleStatusLabel.Text = "Preview battle\nPress E or Enter to return";
+            _battleStatusLabel.Text = $"Preview battle\nPress {GetInteractPrompt()} to return";
         }
 
         TargetEnemy(FindFirstActiveEnemyIndex());
@@ -383,7 +385,7 @@ public partial class BattleScene : Node3D
 
     private void UpdateBattleStatus(EncounterResult encounter)
     {
-        _battleStatusLabel.Text = $"{encounter.ZoneName}\n{encounter.TerrainType} encounter: {encounter.EnemyCount} foe(s)\nPress E or Enter to resolve battle";
+        _battleStatusLabel.Text = $"{encounter.ZoneName}\n{encounter.TerrainType} encounter: {encounter.EnemyCount} foe(s)\nPress {GetInteractPrompt()} to resolve battle";
     }
 
     private BattleResult CreateBattleResult()
@@ -399,6 +401,23 @@ public partial class BattleScene : Node3D
             RemainingMp = playerState.CurrentMp,
             PlayerReturnPosition = playerState.ReturnPosition
         };
+    }
+
+    private static string GetInteractPrompt()
+    {
+        var events = InputMap.ActionGetEvents("interact");
+        var eventNames = new List<string>();
+
+        foreach (var inputEvent in events)
+        {
+            var eventName = inputEvent.AsText();
+            if (!string.IsNullOrWhiteSpace(eventName) && !eventNames.Contains(eventName))
+            {
+                eventNames.Add(eventName);
+            }
+        }
+
+        return eventNames.Count > 0 ? string.Join(" or ", eventNames) : DefaultInteractPrompt;
     }
 
     private static Color ResolveEnemyTint(string enemyName, int index)
