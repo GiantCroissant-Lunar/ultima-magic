@@ -1,0 +1,45 @@
+[gd_resource type="TileSet" load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://Resources/Sprites/tiles/overworld_tiles.png" id="1_tiles"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_overworld"]
+texture = ExtResource("1_tiles")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/custom_data_0 = true
+0:0/0/custom_data_1 = 1.0
+0:0/0/custom_data_2 = "grass"
+1:0/0 = 0
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+1:0/0/custom_data_0 = false
+1:0/0/custom_data_1 = 0.0
+1:0/0/custom_data_2 = "water"
+2:0/0 = 0
+2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+2:0/0/custom_data_0 = false
+2:0/0/custom_data_1 = 0.0
+2:0/0/custom_data_2 = "mountain"
+3:0/0 = 0
+3:0/0/custom_data_0 = true
+3:0/0/custom_data_1 = 1.5
+3:0/0/custom_data_2 = "forest"
+4:0/0 = 0
+4:0/0/custom_data_0 = true
+4:0/0/custom_data_1 = 0.35
+4:0/0/custom_data_2 = "path"
+5:0/0 = 0
+5:0/0/custom_data_0 = true
+5:0/0/custom_data_1 = 0.0
+5:0/0/custom_data_2 = "town"
+
+[resource]
+tile_size = Vector2i(32, 32)
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 1
+custom_data_layer_0/name = "walkable"
+custom_data_layer_0/type = 1
+custom_data_layer_1/name = "encounter_rate"
+custom_data_layer_1/type = 3
+custom_data_layer_2/name = "tile_type"
+custom_data_layer_2/type = 4
+sources/0 = SubResource("TileSetAtlasSource_overworld")
