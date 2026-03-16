@@ -94,3 +94,11 @@ pixel_size = 0.02
 texture = ExtResource("2_enemy_texture")
 
 [node name="BattleUI" type="CanvasLayer" parent="."]
+
+[node name="StatusLabel" type="Label" parent="BattleUI"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 340.0
+offset_bottom = 88.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Battle loading..."

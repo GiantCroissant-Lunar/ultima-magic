@@ -38,12 +38,22 @@ public partial class BattleScene : Node3D
     private Camera3D _camera = null!;
     private Sprite3D[] _enemySlots = Array.Empty<Sprite3D>();
     private EnemyVisualState[] _enemyStates = Array.Empty<EnemyVisualState>();
+    private Label _battleStatusLabel = null!;
+    private MeshInstance3D _groundPlane = null!;
+    private MeshInstance3D _backWall = null!;
+    private WorldEnvironment _worldEnvironment = null!;
     private Texture2D? _defaultEnemyTexture;
+    private BattleTransitionData? _transitionData;
     private int _targetedEnemyIndex = -1;
+    private bool _battleCompleteRequested;
 
     public override void _Ready()
     {
         _camera = GetNode<Camera3D>("Camera3D");
+        _groundPlane = GetNode<MeshInstance3D>("GroundPlane");
+        _backWall = GetNode<MeshInstance3D>("BackWall");
+        _worldEnvironment = GetNode<WorldEnvironment>("WorldEnvironment");
+        _battleStatusLabel = GetNode<Label>("BattleUI/StatusLabel");
         _enemySlots =
         [
             GetNode<Sprite3D>("EnemySlots/EnemySlot1"),
@@ -65,18 +75,23 @@ public partial class BattleScene : Node3D
             GameManager.Instance.CurrentState = GameManager.GameState.Battle;
         }
 
-        var pendingEncounter = SceneManager.Instance?.ConsumePendingEncounter();
-        if (pendingEncounter != null)
+        _transitionData = SceneManager.Instance?.ConsumePendingBattleTransition();
+        if (_transitionData != null)
         {
-            LoadEncounter(pendingEncounter);
+            ApplyTerrainVisuals(_transitionData.Encounter.TerrainType);
+            LoadEncounter(_transitionData.Encounter);
+            UpdateBattleStatus(_transitionData.Encounter);
         }
         else
         {
+            ApplyTerrainVisuals("preview");
             LoadEnemies(CreatePreviewEnemies(4));
+            _battleStatusLabel.Text = "Preview battle\nPress E or Enter to return";
         }
 
         TargetEnemy(FindFirstActiveEnemyIndex());
         SetProcess(true);
+        SetProcessUnhandledInput(true);
     }
 
     public override void _Process(double delta)
@@ -111,6 +126,18 @@ public partial class BattleScene : Node3D
                 slot.Scale = state.BaseScale;
                 slot.Modulate = state.BaseTint;
             }
+        }
+    }
+
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        if (@event.IsActionPressed("interact")
+            && !@event.IsEcho()
+            && GameManager.Instance?.IsInputEnabled != false
+            && !_battleCompleteRequested)
+        {
+            CompleteBattle(CreateBattleResult());
+            GetViewport().SetInputAsHandled();
         }
     }
 
@@ -206,6 +233,17 @@ public partial class BattleScene : Node3D
         {
             _targetedEnemyIndex = FindNextActiveEnemyIndex(index);
         }
+    }
+
+    private void CompleteBattle(BattleResult battleResult)
+    {
+        if (_battleCompleteRequested)
+        {
+            return;
+        }
+
+        _battleCompleteRequested = true;
+        SceneManager.Instance?.TransitionToOverworld(battleResult);
     }
 
     private void ConfigureEnemySlot(int index)
@@ -309,6 +347,58 @@ public partial class BattleScene : Node3D
         }
 
         return previewEnemies;
+    }
+
+    private void ApplyTerrainVisuals(string terrainType)
+    {
+        var environment = _worldEnvironment.Environment;
+        var terrain = terrainType?.ToLowerInvariant() ?? "unknown";
+
+        var groundColor = terrain switch
+        {
+            "forest" => new Color(0.18f, 0.29f, 0.18f, 1.0f),
+            "mountain" => new Color(0.35f, 0.32f, 0.30f, 1.0f),
+            "town" => new Color(0.33f, 0.28f, 0.18f, 1.0f),
+            "water" => new Color(0.12f, 0.20f, 0.34f, 1.0f),
+            "preview" => new Color(0.27f, 0.22f, 0.14f, 1.0f),
+            _ => new Color(0.24f, 0.28f, 0.18f, 1.0f)
+        };
+
+        var wallColor = groundColor.Lightened(0.15f);
+        var backgroundColor = groundColor.Darkened(0.35f);
+
+        if (_groundPlane.MaterialOverride is StandardMaterial3D groundMaterial)
+        {
+            groundMaterial.AlbedoColor = groundColor;
+        }
+
+        if (_backWall.MaterialOverride is StandardMaterial3D wallMaterial)
+        {
+            wallMaterial.AlbedoColor = wallColor;
+        }
+
+        environment.BackgroundColor = backgroundColor;
+        environment.AmbientLightColor = wallColor.Lightened(0.1f);
+    }
+
+    private void UpdateBattleStatus(EncounterResult encounter)
+    {
+        _battleStatusLabel.Text = $"{encounter.ZoneName}\n{encounter.TerrainType} encounter: {encounter.EnemyCount} foe(s)\nPress E or Enter to resolve battle";
+    }
+
+    private BattleResult CreateBattleResult()
+    {
+        var playerState = _transitionData?.PlayerState ?? new PlayerStateSnapshot();
+
+        return new BattleResult
+        {
+            PlayerWon = true,
+            ExperienceGained = 0,
+            ItemsGained = Array.Empty<string>(),
+            RemainingHp = playerState.CurrentHp,
+            RemainingMp = playerState.CurrentMp,
+            PlayerReturnPosition = playerState.ReturnPosition
+        };
     }
 
     private static Color ResolveEnemyTint(string enemyName, int index)

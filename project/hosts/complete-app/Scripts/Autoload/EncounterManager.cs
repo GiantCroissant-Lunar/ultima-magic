@@ -83,6 +83,13 @@ public partial class EncounterManager : Node
         UpdateDebugOverlay();
     }
 
+    public void ResetEncounterCounter()
+    {
+        _stepsSinceLastEncounter = 0;
+        CurrentEncounterProbability = 0.0f;
+        UpdateDebugOverlay();
+    }
+
     private void OnPlayerStep(Vector2I tilePosition)
     {
         var zone = ResolveCurrentZone(tilePosition);
