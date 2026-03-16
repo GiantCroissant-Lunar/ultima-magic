@@ -6,7 +6,6 @@ public partial class Overworld : Node2D
 {
     private const int MapWidth = 40;
     private const int MapHeight = 30;
-    private const int TileSize = 32;
     private const int TerrainSourceId = 0;
 
     private static readonly Vector2I GrassTile = new(0, 0);
@@ -15,20 +14,16 @@ public partial class Overworld : Node2D
     private static readonly Vector2I ForestTile = new(3, 0);
     private static readonly Vector2I PathTile = new(4, 0);
     private static readonly Vector2I TownTile = new(5, 0);
-    private static readonly Vector2I InitialPlayerTile = new(6, 15);
 
     private TileMapLayer _groundLayer = null!;
     private TileMapLayer _detailLayer = null!;
-    private Node2D _player = null!;
 
     public override void _Ready()
     {
         _groundLayer = GetNode<TileMapLayer>("TileMap/GroundLayer");
         _detailLayer = GetNode<TileMapLayer>("TileMap/DetailLayer");
-        _player = GetNode<Node2D>("Player");
 
         BuildMap();
-        PositionPlayer(InitialPlayerTile);
     }
 
     private void BuildMap()
@@ -121,12 +116,5 @@ public partial class Overworld : Node2D
                 _detailLayer.EraseCell(new Vector2I(x, y));
             }
         }
-    }
-
-    private void PositionPlayer(Vector2I tilePosition)
-    {
-        _player.Position = new Vector2(
-            (tilePosition.X + 0.5f) * TileSize,
-            (tilePosition.Y + 0.5f) * TileSize);
     }
 }
