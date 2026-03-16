@@ -9,6 +9,10 @@ public partial class BattleScene : Node3D
 {
     private const float BaseEnemyPixelSize = 0.02f;
     private const float ReferenceEnemyDistance = 4.0f;
+    private const float MinDistanceThreshold = 0.01f;
+    private const float MinDistanceScale = 0.85f;
+    private const float MaxDistanceScale = 1.15f;
+    private const float MillisecondsPerSecond = 1000.0f;
     private const float TargetPulseSpeed = 4.0f;
     private const float TargetScaleBoost = 0.08f;
     private const float DeathFadeDurationSeconds = 0.45f;
@@ -77,7 +81,7 @@ public partial class BattleScene : Node3D
 
     public override void _Process(double delta)
     {
-        var pulse = (Mathf.Sin((float)Time.GetTicksMsec() / 1000.0f * TargetPulseSpeed) + 1.0f) * 0.5f;
+        var pulse = (Mathf.Sin((float)Time.GetTicksMsec() / MillisecondsPerSecond * TargetPulseSpeed) + 1.0f) * 0.5f;
 
         for (var index = 0; index < _enemySlots.Length; index++)
         {
@@ -90,7 +94,7 @@ public partial class BattleScene : Node3D
             var state = _enemyStates[index];
             if (state.IsDefeated)
             {
-                UpdateDeathAnimation(slot, state, delta);
+                UpdateDeathAnimation(index, slot, state, delta);
                 continue;
             }
 
@@ -206,11 +210,11 @@ public partial class BattleScene : Node3D
         var slot = _enemySlots[index];
         slot.Position = EnemySlotPositions[index];
         slot.Visible = false;
-        slot.Set("billboard", 1);
-        slot.Set("shaded", false);
-        slot.Set("double_sided", true);
-        slot.Set("alpha_cut", 1);
-        slot.Set("pixel_size", BaseEnemyPixelSize);
+        slot.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+        slot.Shaded = false;
+        slot.DoubleSided = true;
+        slot.AlphaCut = SpriteBase3D.AlphaCutMode.Discard;
+        slot.PixelSize = BaseEnemyPixelSize;
 
         var state = _enemyStates[index];
         state.BasePosition = slot.Position;
@@ -221,11 +225,11 @@ public partial class BattleScene : Node3D
     private Vector3 ComputeDistanceScale(Node3D slot)
     {
         var distance = _camera.GlobalPosition.DistanceTo(slot.GlobalPosition);
-        var scaleFactor = Mathf.Clamp(ReferenceEnemyDistance / Mathf.Max(distance, 0.01f), 0.85f, 1.15f);
+        var scaleFactor = Mathf.Clamp(ReferenceEnemyDistance / Mathf.Max(distance, MinDistanceThreshold), MinDistanceScale, MaxDistanceScale);
         return Vector3.One * scaleFactor;
     }
 
-    private void UpdateDeathAnimation(Sprite3D slot, EnemyVisualState state, double delta)
+    private void UpdateDeathAnimation(int index, Sprite3D slot, EnemyVisualState state, double delta)
     {
         state.DeathProgress = Mathf.Min(1.0f, state.DeathProgress + (float)delta / DeathFadeDurationSeconds);
         slot.Position = state.BasePosition + Vector3.Down * DeathDropDistance * state.DeathProgress;
@@ -235,7 +239,7 @@ public partial class BattleScene : Node3D
 
         if (state.DeathProgress >= 1.0f)
         {
-            HideEnemySlot(Array.IndexOf(_enemyStates, state));
+            HideEnemySlot(index);
             if (_targetedEnemyIndex < 0)
             {
                 _targetedEnemyIndex = FindFirstActiveEnemyIndex();
@@ -311,7 +315,7 @@ public partial class BattleScene : Node3D
             return PreviewTints[index % PreviewTints.Length];
         }
 
-        var hash = (int)((uint)enemyName.GetHashCode() % (uint)PreviewTints.Length);
+        var hash = Math.Abs(enemyName.GetHashCode() % PreviewTints.Length);
         return PreviewTints[hash];
     }
 

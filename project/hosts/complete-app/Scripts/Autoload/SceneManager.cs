@@ -58,7 +58,7 @@ public partial class SceneManager : Node
         {
             GameManager.Instance.CurrentState = GameManager.GameState.Battle;
         }
-        CallDeferred(MethodName.ChangeScene, BattleScenePath);
+        CallDeferred(nameof(ChangeScene), BattleScenePath);
     }
 
     public EncounterResult? ConsumePendingEncounter()
