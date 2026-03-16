@@ -84,7 +84,9 @@ public partial class Player : CharacterBody2D
     private void TryMove(Vector2I direction)
     {
         var targetTile = TilePosition + direction;
-        if (!OverworldGrid.IsWithinMap(_groundLayer, targetTile) || !OverworldGrid.IsWalkable(_groundLayer, _detailLayer, targetTile))
+        if (!OverworldGrid.IsWithinMap(_groundLayer, targetTile)
+            || !OverworldGrid.IsWalkable(_groundLayer, _detailLayer, targetTile)
+            || OverworldGrid.HasTileBlocker(GetTree(), targetTile, TileSize))
         {
             return;
         }

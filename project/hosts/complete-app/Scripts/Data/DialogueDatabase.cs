@@ -24,7 +24,11 @@ public static class DialogueDatabase
             && _entries != null
             && _entries.TryGetValue(dialogueId, out var entry))
         {
-            return entry;
+            return new DialogueEntry
+            {
+                Name = entry.Name,
+                Lines = (string[])entry.Lines.Clone()
+            };
         }
 
         return new DialogueEntry
