@@ -10,4 +10,12 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\UltimaMagic.Gameplay\UltimaMagic.Gameplay.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Tests\**\*.cs" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="CharacterStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/CharacterStats.cs" id="1_character_stats"]
+
+[resource]
+script = ExtResource("1_character_stats")
+CharacterName = "Hero"
+Level = 1
+Experience = 0
+Hp = 100
+MaxHp = 100
+Mp = 30
+MaxMp = 30
+Strength = 10
+Defense = 8
+Intelligence = 6
+Agility = 7
+Luck = 5
+MaxHpPerLevel = 12
+MaxMpPerLevel = 4
+StrengthPerLevel = 2
+DefensePerLevel = 1
+IntelligencePerLevel = 1
+AgilityPerLevel = 1
+LuckPerLevel = 1
