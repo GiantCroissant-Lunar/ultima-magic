@@ -25,7 +25,7 @@ public static class DamageCalculator
     public static bool RollCritical(CharacterStats attacker)
     {
         ArgumentNullException.ThrowIfNull(attacker);
-        return GD.Randf() < Mathf.Clamp(attacker.Luck / 100.0f, 0.0f, 1.0f);
+        return GD.Randf() < Mathf.Clamp(attacker.EffectiveLuck / 100.0f, 0.0f, 1.0f);
     }
 
     public static bool RollCritical(CharacterStats attacker, float roll)

@@ -6,7 +6,7 @@ public interface ICombatantStats
 
     int EffectiveDefense { get; }
 
-    int Intelligence { get; }
+    int EffectiveIntelligence { get; }
 
-    int Luck { get; }
+    int EffectiveLuck { get; }
 }

@@ -4,7 +4,7 @@ public static class DamageCalculator
 {
     /// <summary>
     /// Physical damage formula: damage = attacker.EffectiveStrength * attackPower - defender.EffectiveDefense / 2.
-    /// Magical damage formula: damage = attacker.Intelligence * spellPower - defender.Intelligence * 3 / 10.
+    /// Magical damage formula: damage = attacker.EffectiveIntelligence * spellPower - defender.EffectiveIntelligence * 3 / 10.
     /// Critical hits multiply the computed damage by 1.5, and all attacks deal at least 1 damage.
     /// </summary>
     public static int CalculatePhysicalDamage(ICombatantStats attacker, ICombatantStats defender, int attackPower)
@@ -21,7 +21,7 @@ public static class DamageCalculator
         ArgumentNullException.ThrowIfNull(attacker);
         ArgumentNullException.ThrowIfNull(defender);
 
-        var rawDamage = attacker.Intelligence * spellPower - defender.Intelligence * 3 / 10;
+        var rawDamage = attacker.EffectiveIntelligence * spellPower - defender.EffectiveIntelligence * 3 / 10;
         return Math.Max(1, rawDamage);
     }
 
@@ -36,6 +36,6 @@ public static class DamageCalculator
     public static bool RollCritical(ICombatantStats attacker, float roll)
     {
         ArgumentNullException.ThrowIfNull(attacker);
-        return roll < Math.Clamp(attacker.Luck / 100.0f, 0.0f, 1.0f);
+        return roll < Math.Clamp(attacker.EffectiveLuck / 100.0f, 0.0f, 1.0f);
     }
 }

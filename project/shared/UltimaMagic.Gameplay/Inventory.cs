@@ -23,6 +23,8 @@ public sealed class Inventory
     public int CountItem(IInventoryItem item)
     {
         ArgumentNullException.ThrowIfNull(item);
-        return _items.Count(existingItem => ReferenceEquals(existingItem, item));
+        return _items.Count(existingItem =>
+            existingItem.GetType() == item.GetType()
+            && string.Equals(existingItem.Name, item.Name, StringComparison.Ordinal));
     }
 }
