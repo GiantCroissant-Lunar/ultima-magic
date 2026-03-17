@@ -76,7 +76,7 @@ public partial class CharacterStats : Resource, ICombatantStats
     [Export]
     public EquipmentItem? Accessory { get; set; }
 
-    public int EffectiveAttackPower => Math.Max(1, 1 + (Weapon?.AttackPowerBonus ?? 0));
+    public int EffectiveAttackPower => Math.Max(1, (Weapon?.AttackPowerBonus ?? 0) + 1);
 
     public int EffectiveStrength => Strength + GetTotalBonus(item => item.StrengthBonus);
 

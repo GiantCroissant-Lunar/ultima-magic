@@ -3,14 +3,14 @@ namespace UltimaMagic.Gameplay;
 public sealed class Inventory
 {
     private readonly List<IInventoryItem> _items = [];
-    private readonly IReadOnlyList<IInventoryItem> _readOnlyItems;
+    private readonly IReadOnlyList<IInventoryItem> _readOnlyView;
 
     public Inventory()
     {
-        _readOnlyItems = _items.AsReadOnly();
+        _readOnlyView = _items.AsReadOnly();
     }
 
-    public IReadOnlyList<IInventoryItem> Items => _readOnlyItems;
+    public IReadOnlyList<IInventoryItem> Items => _readOnlyView;
 
     public void AddItem(IInventoryItem item)
     {
@@ -21,14 +21,18 @@ public sealed class Inventory
     public bool RemoveItem(IInventoryItem item)
     {
         ArgumentNullException.ThrowIfNull(item);
-        var index = _items.FindIndex(existingItem => MatchesIdentity(existingItem, item));
-        if (index < 0)
+        for (var index = 0; index < _items.Count; index++)
         {
-            return false;
+            if (!MatchesIdentity(_items[index], item))
+            {
+                continue;
+            }
+
+            _items.RemoveAt(index);
+            return true;
         }
 
-        _items.RemoveAt(index);
-        return true;
+        return false;
     }
 
     public int CountItem(IInventoryItem item)
