@@ -103,27 +103,8 @@ public partial class CharacterStats : Resource, ICombatantStats
     public EquipmentItem? Equip(EquipmentItem item)
     {
         ArgumentNullException.ThrowIfNull(item);
-
-        var previousItem = item.Slot switch
-        {
-            EquipmentSlot.Weapon => Weapon,
-            EquipmentSlot.Armor => Armor,
-            EquipmentSlot.Accessory => Accessory,
-            _ => throw new ArgumentOutOfRangeException(nameof(item))
-        };
-
-        switch (item.Slot)
-        {
-            case EquipmentSlot.Weapon:
-                Weapon = item;
-                break;
-            case EquipmentSlot.Armor:
-                Armor = item;
-                break;
-            case EquipmentSlot.Accessory:
-                Accessory = item;
-                break;
-        }
+        var previousItem = GetEquippedItem(item.Slot);
+        SetEquippedItem(item.Slot, item);
 
         ClampVitals();
         return previousItem;
@@ -131,26 +112,8 @@ public partial class CharacterStats : Resource, ICombatantStats
 
     public EquipmentItem? Unequip(EquipmentSlot slot)
     {
-        EquipmentItem? removedItem = slot switch
-        {
-            EquipmentSlot.Weapon => Weapon,
-            EquipmentSlot.Armor => Armor,
-            EquipmentSlot.Accessory => Accessory,
-            _ => throw new ArgumentOutOfRangeException(nameof(slot))
-        };
-
-        switch (slot)
-        {
-            case EquipmentSlot.Weapon:
-                Weapon = null;
-                break;
-            case EquipmentSlot.Armor:
-                Armor = null;
-                break;
-            case EquipmentSlot.Accessory:
-                Accessory = null;
-                break;
-        }
+        var removedItem = GetEquippedItem(slot);
+        SetEquippedItem(slot, null);
 
         ClampVitals();
         return removedItem;
@@ -215,6 +178,14 @@ public partial class CharacterStats : Resource, ICombatantStats
         return GetEquippedItems().Sum(selector);
     }
 
+    private EquipmentItem? GetEquippedItem(EquipmentSlot slot) => slot switch
+    {
+        EquipmentSlot.Weapon => Weapon,
+        EquipmentSlot.Armor => Armor,
+        EquipmentSlot.Accessory => Accessory,
+        _ => throw new ArgumentOutOfRangeException(nameof(slot))
+    };
+
     private IEnumerable<EquipmentItem> GetEquippedItems()
     {
         if (Weapon != null)
@@ -230,6 +201,24 @@ public partial class CharacterStats : Resource, ICombatantStats
         if (Accessory != null)
         {
             yield return Accessory;
+        }
+    }
+
+    private void SetEquippedItem(EquipmentSlot slot, EquipmentItem? item)
+    {
+        switch (slot)
+        {
+            case EquipmentSlot.Weapon:
+                Weapon = item;
+                break;
+            case EquipmentSlot.Armor:
+                Armor = item;
+                break;
+            case EquipmentSlot.Accessory:
+                Accessory = item;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(slot));
         }
     }
 

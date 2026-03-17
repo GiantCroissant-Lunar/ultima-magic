@@ -21,11 +21,15 @@ public static class DamageCalculator
         ArgumentNullException.ThrowIfNull(attacker);
         ArgumentNullException.ThrowIfNull(defender);
 
-        var rawDamage = attacker.EffectiveIntelligence * spellPower - defender.EffectiveIntelligence * 3 / 10;
+        var rawDamage = attacker.EffectiveIntelligence * spellPower - (defender.EffectiveIntelligence * 3) / 10;
         return Math.Max(1, rawDamage);
     }
 
-    public static int ApplyCriticalHit(int damage) => Math.Max(1, (damage * 3 + 1) / 2);
+    public static int ApplyCriticalHit(int damage)
+    {
+        // Add 1 before dividing so positive odd values round up when applying the 1.5x critical multiplier.
+        return Math.Max(1, (damage * 3 + 1) / 2);
+    }
 
     public static bool RollCritical(ICombatantStats attacker)
     {
