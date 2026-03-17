@@ -40,6 +40,11 @@ public static class DamageCalculator
     public static bool RollCritical(ICombatantStats attacker, float roll)
     {
         ArgumentNullException.ThrowIfNull(attacker);
+        if (roll < 0.0f || roll >= 1.0f)
+        {
+            throw new ArgumentOutOfRangeException(nameof(roll), "Roll must be within the range [0, 1).");
+        }
+
         return roll < Math.Clamp(attacker.EffectiveLuck / 100.0f, 0.0f, 1.0f);
     }
 }

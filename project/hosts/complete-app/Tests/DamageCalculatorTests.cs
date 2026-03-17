@@ -45,6 +45,16 @@ public sealed class DamageCalculatorTests
         Assert.False(DamageCalculator.RollCritical(attacker, 0.15f));
     }
 
+    [Theory]
+    [InlineData(-0.01f)]
+    [InlineData(1.0f)]
+    public void RollCritical_RejectsOutOfRangeRolls(float roll)
+    {
+        var attacker = new TestCombatant { EffectiveStrength = 10, EffectiveDefense = 8, EffectiveIntelligence = 6, EffectiveLuck = 15 };
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => DamageCalculator.RollCritical(attacker, roll));
+    }
+
     [Fact]
     public void ApplyCriticalHit_MultipliesDamageByOnePointFive()
     {

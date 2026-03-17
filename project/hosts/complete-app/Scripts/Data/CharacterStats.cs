@@ -76,7 +76,7 @@ public partial class CharacterStats : Resource, ICombatantStats
     [Export]
     public EquipmentItem? Accessory { get; set; }
 
-    public int EffectiveAttackPower => 1 + (Weapon?.AttackPowerBonus ?? 0);
+    public int EffectiveAttackPower => Math.Max(1, 1 + (Weapon?.AttackPowerBonus ?? 0));
 
     public int EffectiveStrength => Strength + GetTotalBonus(item => item.StrengthBonus);
 
@@ -96,9 +96,9 @@ public partial class CharacterStats : Resource, ICombatantStats
 
     public void TakeDamage(int amount) => Hp = Mathf.Max(0, Hp - Math.Max(0, amount));
 
-    public void Heal(int amount) => Hp = Mathf.Min(EffectiveMaxHp, Hp + Math.Max(0, amount));
+    public void Heal(int amount) => Hp = Mathf.Clamp(Hp + Math.Max(0, amount), 0, SafeEffectiveMaxHp);
 
-    public void RestoreMp(int amount) => Mp = Mathf.Min(EffectiveMaxMp, Mp + Math.Max(0, amount));
+    public void RestoreMp(int amount) => Mp = Mathf.Clamp(Mp + Math.Max(0, amount), 0, SafeEffectiveMaxMp);
 
     public EquipmentItem? Equip(EquipmentItem item)
     {
@@ -224,7 +224,11 @@ public partial class CharacterStats : Resource, ICombatantStats
 
     private void ClampVitals()
     {
-        Hp = Mathf.Clamp(Hp, 0, EffectiveMaxHp);
-        Mp = Mathf.Clamp(Mp, 0, EffectiveMaxMp);
+        Hp = Mathf.Clamp(Hp, 0, SafeEffectiveMaxHp);
+        Mp = Mathf.Clamp(Mp, 0, SafeEffectiveMaxMp);
     }
+
+    private int SafeEffectiveMaxHp => Math.Max(0, EffectiveMaxHp);
+
+    private int SafeEffectiveMaxMp => Math.Max(0, EffectiveMaxMp);
 }

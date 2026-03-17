@@ -23,5 +23,23 @@ public sealed class InventoryTests
         Assert.Equal(1, inventory.CountItem(potion));
     }
 
+    [Fact]
+    public void Items_ReturnsCachedReadOnlyView()
+    {
+        var inventory = new Inventory();
+
+        Assert.Same(inventory.Items, inventory.Items);
+    }
+
+    [Fact]
+    public void RemoveItem_UsesSameIdentityRulesAsCount()
+    {
+        var inventory = new Inventory();
+        inventory.AddItem(new TestItem("Potion"));
+
+        Assert.True(inventory.RemoveItem(new TestItem("Potion")));
+        Assert.Equal(0, inventory.CountItem(new TestItem("Potion")));
+    }
+
     private sealed record TestItem(string Name) : IInventoryItem;
 }
